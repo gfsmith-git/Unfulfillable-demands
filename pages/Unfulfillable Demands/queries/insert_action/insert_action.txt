@@ -1,0 +1,16 @@
+UPDATE unfulfillable_demands."actioned_ud_products"
+SET
+	"New" = NULL
+WHERE unfulfillable_demands.actioned_ud_products."%Prod_Code" = {{UD_Table.updatedRow["%Prod_Code"]}};
+
+INSERT INTO unfulfillable_demands."actioned_ud_products" ("%Prod_Code", "Actioned_Status", "Comments", "User", "Date","New","Actioned")
+
+  VALUES ({{UD_Table.updatedRow["%Prod_Code"]}},
+CASE WHEN LENGTH({{UD_Table.updatedRow["Actioned_Status"]}}) >0
+THEN {{UD_Table.updatedRow["Actioned_Status"]}}
+ELSE NULL
+END	,{{UD_Table.updatedRow["Comments"]}},{{appsmith.user.email}}, {{d = new Date()}},'1',
+CASE WHEN LENGTH({{UD_Table.updatedRow["Actioned_Status"]}}) >0
+THEN 'Y'
+ELSE 'N'
+END);

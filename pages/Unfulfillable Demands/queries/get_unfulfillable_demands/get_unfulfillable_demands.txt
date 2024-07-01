@@ -1,0 +1,42 @@
+WITH loglist as(
+SELECT DISTINCT ON ("%Prod_Code")
+"%Prod_Code",
+"Actioned_Status",
+"Comments",
+"User",
+"Date",
+"Actioned"
+FROM unfulfillable_demands."actioned_ud_products" 
+WHERE "New" ='1'),
+
+UD as
+ (SELECT 
+	unfulfillable_demands."%Prod_Code",
+	CASE WHEN unfulfillable_demands."ud_int" IS NULL THEN 0 ELSE unfulfillable_demands."ud_int" END,
+	CASE WHEN unfulfillable_demands."ud_onpo" IS NULL THEN 0 ELSE unfulfillable_demands."ud_onpo" END,
+	unfulfillable_demands."ud_demands",
+	CASE WHEN unfulfillable_demands."ud_physical" IS NULL THEN 0 ELSE unfulfillable_demands."ud_physical" END,
+	unfulfillable_demands."Full Product",
+	unfulfillable_demands."ud_available",
+	unfulfillable_demands."ud_totalfree",	
+	CASE WHEN unfulfillable_demands."ud_calloffqty" IS NULL THEN 0 ELSE unfulfillable_demands."ud_calloffqty" END,
+	unfulfillable_demands."Product Status Code",
+	loglist."Actioned_Status",
+	loglist."Comments",
+	loglist."User",
+	loglist."Date"													as "Log Date",
+	CASE WHEN loglist."Actioned" = 'Y' THEN 'Y'
+		ELSE 'N'
+		End																		as "Actioned"
+FROM unfulfillable_demands."unfulfillable_demands"
+
+LEFT JOIN loglist on unfulfillable_demands."%Prod_Code" = loglist."%Prod_Code"
+ORDER BY "ud_totalfree" ASC)
+	
+SELECT *
+FROM UD
+	WHERE "Actioned" <> CASE
+    WHEN {{Ignore_actioned.selectedOptionValue}} = 'Y' THEN 'N'
+    WHEN {{Ignore_actioned.selectedOptionValue}} = 'N' THEN 'Y'
+		ELSE 'ALL'
+END;

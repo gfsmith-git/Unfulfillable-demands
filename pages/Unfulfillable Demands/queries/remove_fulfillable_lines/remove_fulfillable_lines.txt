@@ -1,0 +1,15 @@
+UPDATE unfulfillable_demands."actioned_ud_products"
+SET
+	"New" = NULL
+WHERE unfulfillable_demands.actioned_ud_products."%Prod_Code" IN 
+
+ (SELECT DISTINCT
+actioned_ud_products."%Prod_Code"
+FROM unfulfillable_demands.actioned_ud_products
+WHERE NOT EXISTS (
+	SELECT
+	unfulfillable_demands."%Prod_Code"
+	FROM unfulfillable_demands.unfulfillable_demands
+	WHERE unfulfillable_demands."%Prod_Code" = actioned_ud_products."%Prod_Code"
+))
+;
