@@ -12,6 +12,8 @@ WHERE "New" ='1'),
 UD as
  (SELECT 
 	unfulfillable_demands."%Prod_Code",
+	CASE WHEN LEFT(unfulfillable_demands."%Prod_Code",1) = 'A' THEN 'RKB'
+	ELSE 'GFS' END 															as "Selling Company",
 	CASE WHEN unfulfillable_demands."ud_int" IS NULL THEN 0 ELSE unfulfillable_demands."ud_int" END,
 	CASE WHEN unfulfillable_demands."ud_onpo" IS NULL THEN 0 ELSE unfulfillable_demands."ud_onpo" END,
 	unfulfillable_demands."ud_demands",
@@ -39,4 +41,8 @@ FROM UD
     WHEN {{Ignore_actioned.selectedOptionValue}} = 'Y' THEN 'N'
     WHEN {{Ignore_actioned.selectedOptionValue}} = 'N' THEN 'Y'
 		ELSE 'ALL'
+END AND "Selling Company" <> CASE
+    WHEN {{SellCo.selectedOptionValue}} = 'RKB' THEN 'GFS'
+    WHEN {{SellCo.selectedOptionValue}} = 'GFS' THEN 'RKB'
+    ELSE 'ALL'
 END;
