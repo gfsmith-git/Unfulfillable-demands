@@ -16,6 +16,7 @@ UD as
 	ELSE 'GFS' END 															as "Selling Company",
 	CASE WHEN unfulfillable_demands."ud_int" IS NULL THEN 0 ELSE unfulfillable_demands."ud_int" END,
 	CASE WHEN unfulfillable_demands."ud_onpo" IS NULL THEN 0 ELSE unfulfillable_demands."ud_onpo" END,
+	CASE WHEN unfulfillable_demands."ud_in_transit" IS NULL THEN 0 ELSE unfulfillable_demands."ud_in_transit" END,
 	unfulfillable_demands."ud_demands",
 	CASE WHEN unfulfillable_demands."ud_physical" IS NULL THEN 0 ELSE unfulfillable_demands."ud_physical" END,
 	unfulfillable_demands."Full Product",
